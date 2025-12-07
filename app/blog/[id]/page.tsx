@@ -1,7 +1,6 @@
 // app/blog/[id]/page.tsx
 import { notFound } from 'next/navigation';
 import { client } from '@/libs/microcms';
-import type { Blog } from '@/types/blog';
 
 interface Props {
   params: Promise<{ id: string }>;   // ← ここが大事！Promise に変更
