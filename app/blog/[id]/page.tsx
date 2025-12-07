@@ -1,12 +1,11 @@
-// app/blog/[id]/page.tsx
 import { client } from '../../../libs/microcms';
 import styles from './page.module.css';
 import dayjs from 'dayjs';
+import type { PageProps } from 'next';
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
 
-// 型定義
 type Props = {
   id: string;
   title: string;
@@ -15,22 +14,16 @@ type Props = {
   category: { name: string };
 };
 
-// microCMSから特定の記事を取得
 async function getBlogPost(id: string): Promise<Props> {
   const data = await client.get({
     endpoint: 'blog',
-    contentId: id,  // ← 修正ポイント！
+    contentId: id,
   });
   return data;
 }
 
-// 記事詳細ページ
-export default async function BlogPostPage({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const { id } = params; // ← await は不要
+export default async function BlogPostPage(props: PageProps) {
+  const id = props.params.id;
   const post = await getBlogPost(id);
 
   const formattedDate = dayjs(post.publishedAt).format('YY.MM.DD');
