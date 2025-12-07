@@ -1,6 +1,6 @@
 // app/blog/[id]/page.tsx
-import { notFound } from 'next/navigation';
-import { client } from '@/libs/microcms';
+import { notFound } from "next/navigation";
+import { client } from "@/libs/microcms";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -8,7 +8,7 @@ interface Props {
 
 export async function generateStaticParams() {
   try {
-    const { contents } = await client.getList({ endpoint: 'blog' });
+    const { contents } = await client.getList({ endpoint: "blog" });
     return contents.map((post: any) => ({
       id: post.id,
     }));
@@ -23,7 +23,7 @@ export default async function BlogPage({ params }: Props) {
   let post;
   try {
     post = await client.get({
-      endpoint: 'blog',
+      endpoint: "blog",
       contentId: id,
     });
   } catch {
@@ -34,7 +34,8 @@ export default async function BlogPage({ params }: Props) {
     <article className="max-w-4xl mx-auto px-4 py-12">
       <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
       <time className="text-gray-500">
-        {post.publishedAt && new Date(post.publishedAt).toLocaleDateString('ja-JP')}
+        {post.publishedAt &&
+          new Date(post.publishedAt).toLocaleDateString("ja-JP")}
       </time>
 
       <div
