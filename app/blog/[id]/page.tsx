@@ -26,7 +26,8 @@ async function getBlogPost(id: string): Promise<Props> {
 
 // 記事詳細ページ
 export default async function BlogPostPage({ params }: { params: { id: string } }) {
-  const post = await getBlogPost(params.id);
+  const { id } = params; // ← await 不要
+  const post = await getBlogPost(id);
 
   const formattedDate = dayjs(post.publishedAt).format('YY.MM.DD');
 
@@ -34,7 +35,7 @@ export default async function BlogPostPage({ params }: { params: { id: string } 
     <main className={styles.main}>
       <h1 className={styles.title}>{post.title}</h1>
       <div className={styles.date}>{formattedDate}</div>
-      <div className={styles.category}>カテゴリー：{post.category?.name}</div>
+      <div className={styles.category}>カテゴリー：{post.category && post.category.name}</div>
       <div className={styles.post} dangerouslySetInnerHTML={{ __html: post.body }} />
     </main>
   );
