@@ -23,7 +23,7 @@ export default async function BlogPage({ params }: Props) {
       endpoint: 'blog',
       contentId: id,
     });
-  } catch (error) {
+  } catch {
     notFound();
   }
 

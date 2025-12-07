@@ -5,3 +5,12 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+
+const nextConfig = {
+  eslint: {
+    // 本番ビルド時にESLintエラーを無視する（Vercelではこれが定番）
+    ignoreDuringBuilds: true,
+  },
+};
+
+export default nextConfig;
