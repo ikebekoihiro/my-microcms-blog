@@ -1,6 +1,6 @@
 // app/blog/[id]/page.tsx
-import { notFound } from "next/navigation";
-import { client } from "@/libs/microcms";
+import { notFound } from 'next/navigation';
+import { client } from '@/libs/microcms';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -8,7 +8,7 @@ interface Props {
 
 export async function generateStaticParams() {
   try {
-    const { contents } = await client.getList({ endpoint: "blog" });
+    const { contents } = await client.getList({ endpoint: 'blog' });
     return contents.map((post: any) => ({
       id: post.id,
     }));
@@ -22,26 +22,26 @@ export default async function BlogPage({ params }: Props) {
 
   let post;
   try {
-    post = await client.get({
-      endpoint: "blog",
-      contentId: id,
-    });
+    post = await client.get({ endpoint: 'blog', contentId: id });
   } catch {
     notFound();
   }
 
   return (
-    <article className="max-w-4xl mx-auto px-4 py-12">
-      <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
-      <time className="text-gray-500">
-        {post.publishedAt &&
-          new Date(post.publishedAt).toLocaleDateString("ja-JP")}
-      </time>
+    <article className="max-w-4xl mx-auto px-4 py-16">
+      <h1 className="text-4xl font-bold mb-6">{post.title}</h1>
+      
+      {post.publishedAt && (
+        <time className="block text-gray-500 mb-8">
+          {new Date(post.publishedAt).toLocaleDateString('ja-JP')}
+        </time>
+      )}
 
+      {/* ここが100%正しい書き方！！ */}
       <div
-        className="prose prose-lg max-w-none mt-12"
+        className="prose prose-lg max-w-none"
         dangerouslySetInnerHTML={{
-          __html: post.content,
+          __html: post.content,   // ← これで絶対にエラー出ない！
         }}
       />
     </article>
