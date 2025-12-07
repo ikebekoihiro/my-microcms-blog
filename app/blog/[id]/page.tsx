@@ -1,38 +1,45 @@
-import { client } from '../../../libs/microcms';
-import styles from './page.module.css';
-import dayjs from 'dayjs';
+// app/blog/[id]/page.tsx
+import { notFound } from 'next/navigation';
+import { client } from '@/libs/microcms';
+import type { Blog } from '@/types/blog';
 
-export const revalidate = 0;
-export const dynamic = "force-dynamic";
-
-type Props = {
-  id: string;
-  title: string;
-  body: string;
-  publishedAt: string;
-  category: { name: string };
-};
-
-async function getBlogPost(id: string): Promise<Props> {
-  const data = await client.get({
-    endpoint: 'blog',
-    contentId: id,
-  });
-  return data;
+interface Props {
+  params: Promise<{ id: string }>;   // ← ここが大事！Promise に変更
 }
 
-// 記事詳細ページ
-export default async function BlogPostPage({ params }: { params: { id: string } }) {
-  const post = await getBlogPost(params.id);
+export async function generateStaticParams() {
+  const { contents } = await client.getList<Blog>({ endpoint: 'blog' });
+  return contents.map((post) => ({
+    id: post.id,
+  }));
+}
 
-  const formattedDate = dayjs(post.publishedAt).format('YY.MM.DD');
+export default async function BlogPage({ params }: Props) {
+  const { id } = await params;                 // ← await で展開
+  let post: Blog;
+
+  try {
+    post = await client.get<Blog>({
+      endpoint: 'blog',
+      contentId: id,
+    });
+  } catch (error) {
+    notFound();
+  }
 
   return (
-    <main className={styles.main}>
-      <h1 className={styles.title}>{post.title}</h1>
-      <div className={styles.date}>{formattedDate}</div>
-      <div className={styles.category}>カテゴリー：{post.category?.name}</div>
-      <div className={styles.post} dangerouslySetInnerHTML={{ __html: post.body }} />
-    </main>
+    <article className="max-w-4xl mx-auto px-4 py-12">
+      <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
+      <time className="text-gray-500">
+        {new Date(post.publishedAt!).toLocaleDateString('ja-JP')}
+      </time>
+
+      <div
+        className="prose prose-lg max-w-none mt-12"
+        dangerouslySetInnerHTML={{
+          __html: post.content,
+        }}
+      />
+    </article>
   );
 }
