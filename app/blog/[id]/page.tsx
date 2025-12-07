@@ -3,22 +3,26 @@ import { notFound } from 'next/navigation';
 import { client } from '@/libs/microcms';
 
 interface Props {
-  params: Promise<{ id: string }>;   // ← ここが大事！Promise に変更
+  params: Promise<{ id: string }>;
 }
 
 export async function generateStaticParams() {
-  const { contents } = await client.getList<Blog>({ endpoint: 'blog' });
-  return contents.map((post) => ({
-    id: post.id,
-  }));
+  try {
+    const { contents } = await client.getList({ endpoint: 'blog' });
+    return contents.map((post: any) => ({
+      id: post.id,
+    }));
+  } catch {
+    return [];
+  }
 }
 
 export default async function BlogPage({ params }: Props) {
-  const { id } = await params;                 // ← await で展開
-  let post: Blog;
+  const { id } = await params;
 
+  let post;
   try {
-    post = await client.get<Blog>({
+    post = await client.get({
       endpoint: 'blog',
       contentId: id,
     });
@@ -30,7 +34,7 @@ export default async function BlogPage({ params }: Props) {
     <article className="max-w-4xl mx-auto px-4 py-12">
       <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
       <time className="text-gray-500">
-        {new Date(post.publishedAt!).toLocaleDateString('ja-JP')}
+        {post.publishedAt && new Date(post.publishedAt).toLocaleDateString('ja-JP')}
       </time>
 
       <div
