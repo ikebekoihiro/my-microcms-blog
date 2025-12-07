@@ -40,9 +40,7 @@ export default async function BlogPage({ params }: Props) {
       {/* ここが100%正しい書き方！！ */}
       <div
         className="prose prose-lg max-w-none"
-        dangerouslySetInnerHTML={{
-          __html: post.content,   // ← これで絶対にエラー出ない！
-        }}
+        dangerouslySetInnerHTML={{ __html: post.content }}
       />
     </article>
   );
