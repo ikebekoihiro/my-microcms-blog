@@ -3,7 +3,7 @@ import { createClient } from 'microcms-js-sdk';
 
 const client = createClient({
   serviceDomain: process.env.SERVICE_DOMAIN!,
-  apiKey: process.env.API_KEY!,
+  apiKey: process.env.MICROCMS_API_KEY!,
 });
 
 export default async function Home() {
