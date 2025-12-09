@@ -1,12 +1,12 @@
 import { createClient } from "microcms-js-sdk";
 
-if (!process.env.SERVICE_DOMAIN || !process.env.API_KEY) {
+if (!process.env.SERVICE_DOMAIN || !process.env.MICROCMS_API_KEY) {
   throw new Error("Missing microCMS environment variables");
 }
 
 export const client = createClient({
   serviceDomain: process.env.SERVICE_DOMAIN!,
-  apiKey: process.env.API_KEY!,
+  apiKey: process.env.MICROCMS_API_KEY!,
 });
 
 export const getList = async () => {
