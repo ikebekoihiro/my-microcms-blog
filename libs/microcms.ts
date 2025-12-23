@@ -1,3 +1,5 @@
+// libs/microcms.ts
+
 import { createClient } from "microcms-js-sdk";
 
 if (!process.env.SERVICE_DOMAIN || !process.env.MICROCMS_API_KEY) {
@@ -5,26 +7,29 @@ if (!process.env.SERVICE_DOMAIN || !process.env.MICROCMS_API_KEY) {
 }
 
 export const client = createClient({
-  serviceDomain: process.env.SERVICE_DOMAIN!,
-  apiKey: process.env.MICROCMS_API_KEY!,
+  serviceDomain: process.env.SERVICE_DOMAIN,
+  apiKey: process.env.MICROCMS_API_KEY,
 });
 
-export const getList = async () => {
-  try {
-    const data = await client.get({
-      endpoint: "blog",
-      queries: { limit: 100 } // 必要に応じて調整
-    });
+export type Blog = {
+  id: string;
+  title: string;
+  description?: string;
+  createdAt: string;
+  thumbnail?: {
+    url: string;
+  };
+};
 
-    // contents がない場合に備える
-    return {
-      contents: data.contents ?? [],
-      totalCount: data.totalCount ?? 0,
-      offset: data.offset ?? 0,
-      limit: data.limit ?? 0,
-    };
-  } catch (error) {
-    console.error("getList error:", error);
-    return { contents: [] };
-  }
+export const getList = async () => {
+  const data = await client.get<{
+    contents: Blog[];
+    totalCount: number;
+    offset: number;
+    limit: number;
+  }>({
+    endpoint: "blog",
+  });
+
+  return data;
 };
